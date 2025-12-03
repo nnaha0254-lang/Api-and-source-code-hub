@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZAIN HUNTER API KEYS | Ultimate Pro</title>
+    
+    <!-- React & ReactDOM -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    
+    <!-- Babel -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Framer Motion -->
+    <script src="https://unpkg.com/framer-motion@10.16.4/dist/framer-motion.js"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;600;800&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background-color: #050505;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        /* Animated Gradient Background */
+        .bg-animated {
+            background: linear-gradient(-45deg, #0f0c29, #302b63, #24243e, #000000);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Mesh Overlay */
+        .mesh-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+            background-size: 30px 30px;
+            opacity: 0.2;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* Glassmorphism Card */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .glass-card:hover {
+            border-color: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 0 20px rgba(124, 58, 237, 0.4), inset 0 0 20px rgba(124, 58, 237, 0.1);
+            transform: translateY(-5px) scale(1.02);
+        }
+
+        /* Running Text Gradient */
+        .text-running-gradient {
+            background: linear-gradient(to right, #ff00cc, #3333ff, #00ffcc, #ff00cc);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            background-size: 200% auto;
+            animation: textFlow 3s linear infinite;
+        }
+
+        @keyframes textFlow {
+            to { background-position: 200% center; }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: #000; }
+        ::-webkit-scrollbar-thumb { 
+            background: linear-gradient(180deg, #4f46e5, #ec4899); 
+            border-radius: 5px; 
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animated"></div>
+    <div class="mesh-overlay"></div>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+        const { motion, AnimatePresence } = window.Motion;
+
+        // --- Utils: Animated Text Character by Character ---
+        const AnimatedText = ({ text, className, delay = 0 }) => {
+            const letters = Array.from(text);
+            const container = {
+                hidden: { opacity: 0 },
+                visible: (i = 1) => ({
+                    opacity: 1,
+                    transition: { staggerChildren: 0.03, delayChildren: delay * i },
+                }),
+            };
+            const child = {
+                visible: {
+                    opacity: 1,
+                    y: 0,
+                    scale: 1,
+                    color: ['#fff', '#a855f7', '#fff'], // Shimmer effect
+                    transition: { type: "spring", damping: 12, stiffness: 100, duration: 2, repeat: Infinity, repeatDelay: 5 }
+                },
+                hidden: { opacity: 0, y: 20, scale: 0.5 },
+            };
+
+            return (
+                <motion.div style={{ display: "inline-block" }} variants={container} initial="hidden" animate="visible" className={className}>
+                    {letters.map((letter, index) => (
+                        <motion.span variants={child} key={index} style={{ display: "inline-block" }}>
+                            {letter === " " ? "\u00A0" : letter}
+                        </motion.span>
+                    ))}
+                </motion.div>
+            );
+        };
+
+        // --- Icons Wrapper ---
+        const Icon = ({ name, size = 20, className }) => {
+            const ref = useRef(null);
+            useEffect(() => {
+                if (window.lucide && window.lucide.icons && window.lucide.icons[name] && ref.current) {
+                    const iconDef = window.lucide.icons[name];
+                    const svgElement = window.lucide.createElement(iconDef);
+                    svgElement.setAttribute('width', size);
+                    svgElement.setAttribute('height', size);
+                    if (className) svgElement.setAttribute('class', `lucide lucide-${name.toLowerCase()} ${className}`);
+                    ref.current.innerHTML = '';
+                    ref.current.appendChild(svgElement);
+                }
+            }, [name, size, className]);
+            return <span ref={ref} className="inline-flex justify-center items-center" />;
+        };
+
+        // --- Data ---
+        const apiData = [
+            { title: "Telegram Story", desc: "Download Telegram stories instantly.", icon: "Send", url: "https://tgstory-down.apis-bj-devs.workers.dev/?url=t.me/username", color: "text-blue-400" },
+            { title: "Spotify Downloader", desc: "Download tracks from Spotify.", icon: "Music", url: "https://spotify-down.apis-bj-devs.workers.dev/?url=https://open.spotify.com/track", color: "text-green-500" },
+            { title: "TikTok Downloader", desc: "Download TikTok videos no-watermark.", icon: "Video", url: "https://tikwm.com/api/?url=", color: "text-pink-500" },
+            { title: "Qwen AI", desc: "Chat with Qwen AI model.", icon: "Bot", url: "https://qwen-ai.apis-bj-devs.workers.dev/?text=hello", color: "text-purple-400" },
+            { title: "Gemini AI", desc: "Google's Gemini Pro model.", icon: "Brain", url: "https://gemini-1-5-flash.bjcoderx.workers.dev/?text=hello", color: "text-blue-300" },
+            { title: "GPT-3.5", desc: "OpenAI GPT-3.5 Chat API.", icon: "MessageSquare", url: "https://gpt-3-5.apis-bj-devs.workers.dev/?prompt=hello", color: "text-green-400" },
+            { title: "SeaArt AI", desc: "Generate art via SeaArt.", icon: "Palette", url: "https://seaart-ai.apis-bj-devs.workers.dev/?Prompt=a+cute+boy", color: "text-yellow-400" },
+            { title: "Text to Image", desc: "Convert text prompts to images.", icon: "Image", url: "https://text-to-img.apis-bj-devs.workers.dev/?prompt=cute+girl", color: "text-indigo-400" },
+            { title: "DeepSeek AI", desc: "DeepSeek conversational AI.", icon: "Code", url: "https://deepseek-ai.apis-bj-devs.workers.dev/?text=hello", color: "text-blue-500" },
+            { title: "Diffusion AI", desc: "Stable Diffusion image gen.", icon: "Wand2", url: "https://diffusion-ai.bjcoderx.workers.dev/?prompt=a+cute+baby", color: "text-pink-400" },
+            { title: "APK Search", desc: "Search Android Apps.", icon: "Smartphone", url: "https://apk-downloader.bjcoderx.workers.dev/?query=telegram", color: "text-green-600" },
+            { title: "Pinterest Search", desc: "Search Pinterest images.", icon: "Pin", url: "https://pinterest-search.apis-bj-devs.workers.dev/?search=Anime&limit=5", color: "text-red-500" },
+            { title: "Bing Search", desc: "Web search via Bing.", icon: "Globe", url: "https://bing-search.apis-bj-devs.workers.dev/?search=cats&limit=2", color: "text-blue-400" },
+            { title: "Google Search", desc: "Web search via Google.", icon: "Search", url: "https://google-search.bjcoderx.workers.dev/?q=cats", color: "text-yellow-500" },
+            { title: "URL to APK", desc: "Convert website URL to APK.", icon: "Link", url: "https://url-to-apk-convert.bjcoderx.workers.dev/create?name=apihub&link=https://bj-bot-hosting.vercel.app/", color: "text-teal-400" },
+            { title: "Country Info", desc: "Get details about any country.", icon: "Flag", url: "https://countrys-information.apis-bj-devs.workers.dev/?name=India", color: "text-orange-400" },
+            { title: "Translator", desc: "Multi-language translation.", icon: "Languages", url: "https://translator.bjcoderx.workers.dev/?text=Hellobrother&fr=en&to=ur", color: "text-blue-200" },
+            { title: "IP Information", desc: "Geo-locate IP addresses.", icon: "Network", url: "https://ip-info.bjcoderx.workers.dev/?ip=149.154.167.91", color: "text-cyan-400" },
+            { title: "Exchange Rate", desc: "Real-time currency converter.", icon: "DollarSign", url: "https://real-time-global-exchange-rates.bjcoderx.workers.dev/?From=USD&Amount=10&To=PKR", color: "text-green-300" },
+            { title: "Nation Info", desc: "Detailed nation statistics.", icon: "Map", url: "https://nation-info.apis-bj-devs.workers.dev/?name=Pakistan", color: "text-lime-400" },
+            { title: "Indian Bomber", desc: "SMS Bomber (IN).", icon: "Bomb", url: "https://legendxdata.site/Api/indbom.php?num=2333333333&repeat=1", color: "text-orange-500" },
+            { title: "Pakistani Bomber", desc: "SMS Bomber (PK).", icon: "Flame", url: "https://shadowscriptz.xyz/shadowapisv4/smsbomberapi.php?number=923001234567", color: "text-green-600" },
+            { title: "Image Enhance", desc: "Upscale and fix images.", icon: "Aperture", url: "https://image-enhance.apis-bj-devs.workers.dev/?imageurl=", color: "text-purple-300" }
+        ];
+
+        const sourceCodeCategories = [
+            { id: "html", title: "HTML Website Code", desc: "Responsive & Modern Templates", icon: "Layout", color: "text-orange-500" },
+            { id: "bot", title: "Telegram Bot Code", desc: "Python & NodeJS Bots", icon: "Bot", color: "text-blue-400" },
+            { id: "termux", title: "Termux Tools Code", desc: "Scripts for Termux Env", icon: "Terminal", color: "text-green-500" }
+        ];
+
+        const sourceCodeData = {
+            "html": [
+                { title: "92Glory Prediction", link: "https://www.mediafire.com/file/dfu8vmpxu5du93w/92GLORY_PREDICTION_SOURCE_CODE.zip/file" },
+                { title: "APK Download Site", link: "https://www.mediafire.com/file/d3p5i2mgsluqvlk/APK_DOWNLOAD_SOURCE_CODE.zip/file" },
+                { title: "Big Small Prediction", link: "https://www.mediafire.com/file/ngqvc212iiz2oun/big-small-prediction-tool_SOURCE_CODE.zip/file" },
+                { title: "Code Generator", link: "https://www.mediafire.com/file/3f5wou99y7rkex9/CODE_GENERATER_SOURCE_CODE.zip/file" },
+                { title: "HTML Code Editor", link: "https://www.mediafire.com/file/okxbrc2j348ytr1/HTML_CODE_EDITOR_SOURCE_CODE.zip/file" },
+                { title: "HTML Encryptor", link: "https://www.mediafire.com/file/qy6qhgyzt0urksn/HTML_ENCRYPTOR_TOOL_SOURCE_CODE.zip/file" },
+                { title: "Lucky Wheel", link: "https://www.mediafire.com/file/efltpcr0k9tvi00/LUCKY_WHEEL__SOURCE_CODE.zip/file" },
+                { title: "Sim DB Secure", link: "https://www.mediafire.com/file/jjnfpz8bp4um7df/SIM_DATABASE_SECURE_CODE.zip/file" },
+                { title: "SMS Bomber Web", link: "https://www.mediafire.com/file/w0xzuutd49s70hh/SMS_BOMBER_SOURCE_CODE.zip/file" },
+                { title: "Social Downloader", link: "https://www.mediafire.com/file/qy0yd6wahaxiv37/SOCIAL_MEDIA_DOWNLOADER_SOURCE_CODE.zip/file" },
+                { title: "Watermark Tool", link: "https://www.mediafire.com/file/n4e1cbgx3g809xl/WATERMARK_TOOL_SOURCE_CODE.zip/file" },
+                { title: "Website Copy Tool", link: "https://www.mediafire.com/file/6d4tr3987jfg05d/WEBSITE_COPY_TOOL.zip/file" },
+                { title: "WhatsApp Ban Tool", link: "https://www.mediafire.com/file/a1fc18t5jg6e5ee/WHATSAPP_BAN_TOOL.zip/file" },
+                { title: "YT Watch Time", link: "https://www.mediafire.com/file/am7qk45dmv94vue/YOUTUBE_UNLIMITED_WATCH_TIME_.zip/file" },
+                { title: "Zoo Rulat Tool", link: "https://www.mediafire.com/file/34gmgb47yxxvbpz/ZOO_RULAT_TOOL.zip/file" }
+            ],
+            "bot": [
+                { title: "All Games Prediction", link: "https://www.mediafire.com/file/11iztvs5g7o1sa0/ALL_GAMES_PREDATION.zip/file" },
+                { title: "Image to Link Bot", link: "https://www.mediafire.com/file/7wbn8cd7sd982oz/IMAGE_TO_LINK_BOT_SOURCE_CODE.zip/file" },
+                { title: "Multi-Tasking Bot", link: "https://www.mediafire.com/file/oqv63d6ro2w9rtb/Multi-Tasking-Bot-main.zip/file" },
+                { title: "Sim Database Bot", link: "https://www.mediafire.com/file/41hj226hd9lp2l6/SIM_DATABASE_.zip/file" },
+                { title: "SMS/Email Bomber", link: "https://www.mediafire.com/file/g9stuuxk4xe60b1/SMS_EMAIL_BOMBER_BOT_.zip/file" },
+                { title: "Tanisha Package", link: "https://www.mediafire.com/file/2g1rbg9jzj7h3gx/TANISHA_PKG_.zip/file" },
+                { title: "HTML Protector Bot", link: "https://www.mediafire.com/file/gl207j5f17qsfb1/TEAM_LEGENDS_HTML_PROTECTOR.zip/file" },
+                { title: "Telegram Prompt Bot", link: "https://www.mediafire.com/file/9be49dav2l1ceu1/Telegram_Prompt_Bot.zip/file" }
+            ],
+            "termux": [
+                { title: "API Crasher", link: "https://www.mediafire.com/file/27vzc29bwebq4zy/API_CRASHER.zip/file" },
+                { title: "File Viewer", link: "https://www.mediafire.com/file/wthvrdrpxsr2sjh/FILE_VIEWER_.zip/file" },
+                { title: "HTML/CSS/JS Copy", link: "https://www.mediafire.com/file/kqjchfib84je0ao/HTML_%252B_CSS_%252B_JS_COPY_TOOL.zip/file" },
+                { title: "Pair Spamming", link: "https://www.mediafire.com/file/qcjyzoaiwrp6801/PAIR_SPAMMING_.zip/file" },
+                { title: "SafeUM Account", link: "https://www.mediafire.com/file/fwsxaq2wzgne6po/SAFEUM_UNLIMITED_ACCOUNT_.zip/file" },
+                { title: "SMS Bomber Termux", link: "https://www.mediafire.com/file/slb6uc9adez8xy2/SMS_BOMBER_.zip/file" },
+                { title: "Teenpatti Prediction", link: "https://www.mediafire.com/file/kwah3m6r0ueshi5/TEENPATTI_PREDICTION_.zip/file" },
+                { title: "API Sniffer Tool", link: "https://www.mediafire.com/file/nmmzrgt1w919qlx/WEBSITE_API_SNIFFER_TOOL.zip/file" }
+            ]
+        };
+
+        // --- Notification ---
+        const Notification = ({ message }) => (
+            <motion.div 
+                initial={{ opacity: 0, y: 50, scale: 0.8 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 50, scale: 0.8 }}
+                className="fixed bottom-5 right-5 z-50 bg-gradient-to-r from-green-500 to-emerald-700 text-white px-6 py-4 rounded-2xl shadow-[0_0_20px_rgba(34,197,94,0.6)] border border-green-300/30 flex items-center gap-3 backdrop-blur-md"
+            >
+                <div className="bg-white/20 p-2 rounded-full"><Icon name="CheckCircle" size={24} className="text-white" /></div>
+                <span className="font-bold text-lg tracking-wide">{message}</span>
+            </motion.div>
+        );
+
+        // --- Main App Component ---
+        const App = () => {
+            const [activeTab, setActiveTab] = useState("api");
+            const [activeCategory, setActiveCategory] = useState(null);
+            const [notification, setNotification] = useState("");
+
+            const showNotify = (msg) => {
+                setNotification(msg);
+                setTimeout(() => setNotification(""), 3000);
+            };
+
+            const copyToClipboard = (text) => {
+                navigator.clipboard.writeText(text);
+                showNotify("Link Copied Successfully!");
+            };
+
+            const downloadFile = (content, filename) => {
+                const blob = new Blob([content], { type: 'text/plain' });
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = `${filename.replace(/\s+/g, '_')}_api.txt`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                showNotify(`Downloading ${filename}...`);
+            };
+
+            const contactNumbers = [
+                { number: "03073449859", label: "Contact Owner 1" },
+                { number: "03140242726", label: "Contact Owner 2" }
+            ];
+
+            return (
+                <div className="min-h-screen flex flex-col items-center py-12 px-4 md:px-6 relative w-full max-w-[1600px] mx-auto">
+                    
+                    {/* Header with 3D Text Animation */}
+                    <motion.header 
+                        initial={{ opacity: 0, y: -50 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.8, type: "spring" }}
+                        className="text-center mb-16 relative z-10"
+                    >
+                        <h1 className="text-5xl md:text-8xl font-black mb-4 tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 drop-shadow-[0_0_15px_rgba(168,85,247,0.5)]">
+                            <AnimatedText text="TEAM SS API KEYS" delay={0.1} />
+                        </h1>
+                        <div className="text-xl md:text-2xl font-light tracking-[0.2em] uppercase text-cyan-300/90 drop-shadow-md">
+                            <AnimatedText text="Premium • Secure • Ultimate" delay={0.5} />
+                        </div>
+                    </motion.header>
+
+                    {/* Navigation Tabs */}
+                    <motion.div 
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: 0.5 }}
+                        className="flex flex-wrap justify-center gap-4 mb-12 p-2 bg-white/5 rounded-full backdrop-blur-xl border border-white/10 shadow-[0_0_30px_rgba(0,0,0,0.5)]"
+                    >
+                        <button 
+                            onClick={() => { setActiveTab("api"); setActiveCategory(null); }}
+                            className={`flex items-center gap-2 px-8 py-3 rounded-full font-bold text-lg transition-all duration-300 ${activeTab === "api" ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-[0_0_20px_#4f46e5]" : "text-gray-400 hover:text-white hover:bg-white/10"}`}
+                        >
+                            <Icon name="Webhook" size={22} className={activeTab === "api" ? "animate-spin-slow" : ""} />
+                            API HUB
+                        </button>
+                        <button 
+                            onClick={() => setActiveTab("source-code")}
+                            className={`flex items-center gap-2 px-8 py-3 rounded-full font-bold text-lg transition-all duration-300 ${activeTab === "source-code" ? "bg-gradient-to-r from-fuchsia-600 to-purple-600 text-white shadow-[0_0_20px_#d946ef]" : "text-gray-400 hover:text-white hover:bg-white/10"}`}
+                        >
+                            <Icon name="Code2" size={22} />
+                            SOURCE CODE
+                        </button>
+                    </motion.div>
+
+                    {/* Content Area */}
+                    <div className="w-full">
+                        <AnimatePresence mode="wait">
+                            
+                            {/* API SECTION */}
+                            {activeTab === "api" && (
+                                <motion.div 
+                                    key="api"
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -20 }}
+                                    transition={{ duration: 0.4 }}
+                                    className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+                                >
+                                    {apiData.map((api, index) => (
+                                        <motion.div 
+                                            key={index} 
+                                            initial={{ opacity: 0, scale: 0.9 }}
+                                            animate={{ opacity: 1, scale: 1 }}
+                                            transition={{ delay: index * 0.05 }}
+                                            className="glass-card rounded-2xl p-6 group relative overflow-hidden"
+                                        >
+                                            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                                            
+                                            <div className="flex items-center gap-4 mb-4 relative z-10">
+                                                <div className={`p-4 rounded-xl bg-slate-900/80 border border-white/10 ${api.color} group-hover:rotate-12 transition-transform duration-300 shadow-[0_0_15px_rgba(255,255,255,0.1)]`}>
+                                                    <Icon name={api.icon} size={30} />
+                                                </div>
+                                                <h3 className="text-xl font-bold text-white group-hover:text-running-gradient transition-colors">
+                                                    {api.title}
+                                                </h3>
+                                            </div>
+                                            
+                                            <p className="text-gray-400 text-sm mb-5 h-10 leading-relaxed font-medium relative z-10">{api.desc}</p>
+                                            
+                                            <div className="bg-black/40 p-3 rounded-lg border border-white/5 mb-5 overflow-hidden relative z-10">
+                                                <code className="text-xs text-blue-300 whitespace-nowrap font-mono block overflow-x-auto no-scrollbar">{api.url}</code>
+                                            </div>
+                                            
+                                            <div className="flex gap-3 relative z-10">
+                                                <button onClick={() => copyToClipboard(api.url)} className="flex-1 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white py-2.5 rounded-xl text-sm font-bold flex justify-center items-center gap-2 transition-all hover:scale-105 shadow-lg">
+                                                    <Icon name="Copy" size={18} /> COPY
+                                                </button>
+                                                <button onClick={() => downloadFile(api.url, api.title)} className="flex-1 bg-gradient-to-r from-slate-700 to-slate-800 hover:from-slate-600 hover:to-slate-700 text-white py-2.5 rounded-xl text-sm font-bold flex justify-center items-center gap-2 transition-all hover:scale-105 border border-white/10">
+                                                    <Icon name="Download" size={18} /> SAVE
+                                                </button>
+                                            </div>
+                                        </motion.div>
+                                    ))}
+                                </motion.div>
+                            )}
+
+                            {/* SOURCE CODE CATEGORIES */}
+                            {activeTab === "source-code" && !activeCategory && (
+                                <motion.div 
+                                    key="categories"
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -20 }}
+                                    className="grid grid-cols-1 md:grid-cols-3 gap-8 px-4"
+                                >
+                                    {sourceCodeCategories.map((cat, i) => (
+                                        <motion.div 
+                                            key={cat.id} 
+                                            initial={{ opacity: 0, y: 50 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            transition={{ delay: i * 0.1 }}
+                                            onClick={() => setActiveCategory(cat.id)}
+                                            className="glass-card p-10 rounded-3xl cursor-pointer group text-center border-t-4 border-transparent hover:border-purple-500 relative overflow-hidden"
+                                        >
+                                            <div className="absolute inset-0 bg-gradient-to-b from-purple-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                                            <div className={`w-24 h-24 mx-auto mb-8 rounded-full bg-slate-900 flex items-center justify-center ${cat.color} group-hover:scale-110 group-hover:rotate-[360deg] transition-all duration-700 shadow-[0_0_30px_rgba(255,255,255,0.1)] border border-white/10`}>
+                                                <Icon name={cat.icon} size={48} />
+                                            </div>
+                                            <h3 className="text-3xl font-black text-white mb-3 tracking-wide">{cat.title}</h3>
+                                            <p className="text-gray-400 mb-8 font-medium">{cat.desc}</p>
+                                            <span className="inline-flex items-center justify-center gap-2 text-purple-400 font-bold text-lg tracking-widest group-hover:text-purple-300 group-hover:gap-4 transition-all">
+                                                EXPLORE <Icon name="ArrowRight" size={20} />
+                                            </span>
+                                        </motion.div>
+                                    ))}
+                                </motion.div>
+                            )}
+
+                            {/* SOURCE CODE LIST */}
+                            {activeTab === "source-code" && activeCategory && (
+                                <motion.div 
+                                    key="list"
+                                    initial={{ opacity: 0, x: 50 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    exit={{ opacity: 0, x: -50 }}
+                                >
+                                    <button 
+                                        onClick={() => setActiveCategory(null)}
+                                        className="mb-8 flex items-center gap-3 text-gray-300 hover:text-white transition-colors group bg-white/5 px-6 py-2 rounded-full w-fit hover:bg-white/10 border border-white/5"
+                                    >
+                                        <div className="bg-slate-800 p-2 rounded-full group-hover:-translate-x-1 transition-transform"><Icon name="ArrowLeft" size={20} /></div>
+                                        <span className="font-bold tracking-wide">BACK TO CATEGORIES</span>
+                                    </button>
+
+                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                        {sourceCodeData[activeCategory].map((item, idx) => (
+                                            <motion.div 
+                                                key={idx} 
+                                                initial={{ opacity: 0, scale: 0.9 }}
+                                                animate={{ opacity: 1, scale: 1 }}
+                                                transition={{ delay: idx * 0.05 }}
+                                                className="glass-card p-6 rounded-xl hover:border-purple-500/50 transition-all group border-l-4 border-l-transparent hover:border-l-purple-500"
+                                            >
+                                                <div className="flex justify-between items-start mb-4">
+                                                    <div className="bg-purple-900/30 p-3 rounded-lg text-purple-400 shadow-inner">
+                                                        <Icon name="FileCode" size={24} />
+                                                    </div>
+                                                    <a href={item.link} target="_blank" className="bg-green-600 hover:bg-green-500 text-white p-2.5 rounded-lg transition-all hover:scale-110 shadow-lg shadow-green-500/30">
+                                                        <Icon name="Download" size={20} />
+                                                    </a>
+                                                </div>
+                                                <h4 className="text-lg font-bold text-white mb-2 group-hover:text-running-gradient transition-colors truncate">{item.title}</h4>
+                                                <p className="text-xs text-gray-500 uppercase tracking-widest font-bold">Source Code .zip</p>
+                                            </motion.div>
+                                        ))}
+                                    </div>
+                                </motion.div>
+                            )}
+
+                        </AnimatePresence>
+                    </div>
+
+                    {/* Contact Section (WhatsApp) */}
+                    <motion.div 
+                        initial={{ opacity: 0, y: 50 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        className="mt-24 w-full max-w-5xl"
+                    >
+                        <div className="glass-card rounded-3xl p-10 text-center border-t border-green-500/30 relative overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.5)]">
+                            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-green-500 to-transparent animate-pulse"></div>
+                            
+                            <h3 className="text-3xl md:text-4xl font-black text-white mb-6 uppercase tracking-wider">
+                                <span className="text-green-400">Direct</span> Contact Us
+                            </h3>
+                            <p className="text-gray-300 mb-10 text-lg max-w-2xl mx-auto">
+                                Need help, premium tools, or custom development? Message us directly on WhatsApp.
+                            </p>
+                            
+                            <div className="flex flex-col md:flex-row justify-center gap-6">
+                                {contactNumbers.map((contact, idx) => (
+                                    <a 
+                                        key={idx}
+                                        href={`https://wa.me/${contact.number.replace(/\D/g,'')}`} 
+                                        target="_blank" 
+                                        className="group relative inline-flex items-center justify-center gap-4 bg-gradient-to-r from-green-600 to-emerald-600 text-white px-8 py-5 rounded-2xl font-bold text-xl transition-all hover:scale-105 hover:shadow-[0_0_30px_rgba(34,197,94,0.6)] overflow-hidden"
+                                    >
+                                        <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+                                        <Icon name="MessageCircle" size={28} className="animate-bounce" />
+                                        <div className="text-left">
+                                            <div className="text-xs uppercase opacity-80 tracking-widest">{contact.label}</div>
+                                            <div className="text-2xl font-mono">{contact.number}</div>
+                                        </div>
+                                    </a>
+                                ))}
+                            </div>
+                        </div>
+                    </motion.div>
+
+                    {/* Footer */}
+                    <footer className="mt-20 text-center text-slate-500 text-sm font-medium tracking-widest">
+                        <p className="flex flex-col md:flex-row items-center justify-center gap-2">
+                            <span>POWERED BY</span> 
+                            <span className="text-running-gradient font-black text-lg">ZAIN HUNTER API KEYS</span> 
+                            <span>&copy; 2025</span>
+                        </p>
+                    </footer>
+
+                    {/* Notifications Toast */}
+                    <AnimatePresence>
+                        {notification && <Notification message={notification} />}
+                    </AnimatePresence>
+
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
